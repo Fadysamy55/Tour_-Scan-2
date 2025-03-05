@@ -1,5 +1,8 @@
+import 'dart:convert';
+
 import 'package:flutter/material.dart';
 import 'package:cloud_firestore/cloud_firestore.dart';
+import 'package:flutter/services.dart';
 import 'package:google_fonts/google_fonts.dart';
 import 'package:image_card/image_card.dart';
 import 'package:tourscan/Screens/pyramids.dart';
@@ -33,62 +36,90 @@ class HomeState extends State<HomePage> {
     super.initState();
     getPlaces();
   }
+  Future<void> importJsonToFirestore() async {
+    try {
+      // Load JSON file from assets
+      String jsonString = await rootBundle.loadString('assets/st.json');
+      List<dynamic> jsonData = json.decode(jsonString);
 
+      // Reference to Firestore collection
+      CollectionReference usersRef = FirebaseFirestore.instance.collection('Statues');
+
+      // Upload data to Firestore
+      for (var item in jsonData) {
+        await usersRef.add(item);
+      }
+
+      print("JSON data successfully imported!");
+    } catch (e) {
+      print("Error importing JSON: $e");
+    }
+  }
   getPlaces() async {
     try {
-      QuerySnapshot querySnapshot = await _firestore.collection('places').get();
-
-      if (querySnapshot.docs.isNotEmpty) {
-        for (int i = 0; i < querySnapshot.docs.length; i++) {
-          // استخدم map للتحقق من وجود الحقول المطلوبة
-          Map<String, dynamic> data = querySnapshot.docs[i].data() as Map<String, dynamic>;
-          String country = data.containsKey('country') ? data['country'] : 'Unknown';
-          String image = data.containsKey('image') ? data['image'] : '';
-          String title = data.containsKey('title') ? data['title'] : '';
-          String description = data.containsKey('description') ? data['description'] : '';
-
-          QuerySnapshot querySnapshotFav = await FirebaseFirestore.instance
-              .collection('fav')
-              .where('user_id', isEqualTo: sharedpref!.getString('uid'))
-              .where('post_id', isEqualTo: querySnapshot.docs[i].id)
-              .get();
-          bool isFav = querySnapshotFav.size > 0;
-
-          PostsModel post = PostsModel(
-              id: querySnapshot.docs[i].id,
-              name: country,
-              imgPath: image,
-              title: title,
-              isFav: isFav,
-              description: description,
-              isPlaces: true);
-          postsModel.add(post);
-          allModel.add(post);
-
-          print('data: $country');
-        }
-        setState(() {});
+      // QuerySnapshot querySnapshot = await _firestore.collection('places').get();
+      //
+      // if (querySnapshot.docs.isNotEmpty) {
+      //   for (int i = 0; i < querySnapshot.docs.length; i++) {
+      //     // استخدم map للتحقق من وجود الحقول المطلوبة
+      //     Map<String, dynamic> data = querySnapshot.docs[i].data() as Map<String, dynamic>;
+      //     String country = data.containsKey('country') ? data['country'] : 'Unknown';
+      //     String image = data.containsKey('image') ? data['image'] : '';
+      //     String title = data.containsKey('title') ? data['title'] : '';
+      //     String description = data.containsKey('description') ? data['description'] : '';
+      //
+      //     QuerySnapshot querySnapshotFav = await FirebaseFirestore.instance
+      //         .collection('fav')
+      //         .where('user_id', isEqualTo: sharedpref!.getString('uid'))
+      //         .where('post_id', isEqualTo: querySnapshot.docs[i].id)
+      //         .get();
+      //     bool isFav = querySnapshotFav.size > 0;
+      //
+      //     PostsModel post = PostsModel(
+      //         id: querySnapshot.docs[i].id,
+      //         name: country,
+      //         imgPath: image,
+      //         title: title,
+      //         isFav: isFav,
+      //         description: description,
+      //         isPlaces: true);
+      //     postsModel.add(post);
+      //     allModel.add(post);
+      //
+      //     print('data: $country');
+      //   }
+      //  setState(() {});
 
         QuerySnapshot querySnapshotStatues =
-        await _firestore.collection('statues').get();
+        await _firestore.collection('Statues').get();
 
         if (querySnapshotStatues.docs.isNotEmpty) {
           for (int x = 0; x < querySnapshotStatues.docs.length; x++) {
             Map<String, dynamic> statueData =
             querySnapshotStatues.docs[x].data() as Map<String, dynamic>;
-            allModel.add(PostsModel(
-                id: querySnapshotStatues.docs[x].id,
-                name: '',
-                imgPath: statueData.containsKey('image') ? statueData['image'] : '',
-                title: statueData.containsKey('title') ? statueData['title'] : '',
-                isFav: false,
-                description: statueData.containsKey('description')
-                    ? statueData['description']
-                    : '',
-                isPlaces: false));
+                PostsModel post = PostsModel(
+                    id: querySnapshotStatues.docs[x].id,
+                    name: '',
+                    imgPath: statueData.containsKey('image') ? statueData['image'] : '',
+                    title: statueData.containsKey('title') ? statueData['title'] : '',
+                    isFav: false,
+                    description: statueData.containsKey('description')
+                        ? statueData['description']
+                        : '',
+                    isPlaces: false);
+           // allModel.add(post);
+            postsModel.add(post);
+
+            setState(() {
+
+            });
+            print('nums');
+            print(postsModel.length.toString());
+            print(allModel.length.toString());
+
           }
         }
-      }
+      // }
     } catch (e) {
       print('error_' + e.toString());
     }

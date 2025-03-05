@@ -183,7 +183,7 @@ class _SettingsPageState extends State<SettingsPage> {
 
   Widget _buildEditableField(String label, String fieldKey) {
     TextEditingController controller =
-    TextEditingController(text: userData![fieldKey]);
+    TextEditingController(text: userData![fieldKey].toString());
     bool isEditing = false;
 
     return StatefulBuilder(builder: (context, setState) {
