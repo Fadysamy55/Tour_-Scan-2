@@ -114,7 +114,7 @@ class _ChatScreenState extends State<ChatScreen> {
                         margin: EdgeInsets.symmetric(vertical: 5, horizontal: 10),
                         padding: EdgeInsets.all(12),
                         decoration: BoxDecoration(
-                          color: isMe ? Colors.brown[800] : Colors.grey[300],
+                          color: isMe ? Color(0xFF582218) : Colors.grey[300],
                           borderRadius: BorderRadius.circular(15),
                         ),
                         child: Text(
@@ -154,7 +154,7 @@ class _ChatScreenState extends State<ChatScreen> {
                 GestureDetector(
                   onTap: _sendMessage,
                   child: CircleAvatar(
-                    backgroundColor: Colors.brown[800],
+                    backgroundColor: Color(0xFF582218),
                     child: Icon(Icons.send, color: Colors.white),
                   ),
                 ),

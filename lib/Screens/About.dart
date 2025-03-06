@@ -18,13 +18,13 @@ class AboutPage extends StatelessWidget {
           crossAxisAlignment: CrossAxisAlignment.start,
           children: [
             Center(
-              child: Icon(Icons.info_outline, size: 80, color: Colors.brown[800]),
+              child: Icon(Icons.info_outline, size: 80, color:Color(0xFF582218)),
             ),
             SizedBox(height: 20),
             Text(
               "Tour Scan",
               style: TextStyle(
-                  fontSize: 24, fontWeight: FontWeight.bold, color: Colors.brown[800]),
+                  fontSize: 24, fontWeight: FontWeight.bold, color: Color(0xFF582218)),
             ),
             SizedBox(height: 10),
             Text(

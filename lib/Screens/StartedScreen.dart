@@ -31,7 +31,7 @@ class _StartedscreenState extends State<Startedscreen> {
             children: [
               // ✅ الصورة أولًا
               Image.network(
-                'https://s3-alpha-sig.figma.com/img/2a85/fbe0/53b0aceedeb4e6f0ce22dad31df48379?Expires=1740960000&Key-Pair-Id=APKAQ4GOSFWCW27IBOMQ&Signature=iQkLLJNjZ0xYHbFPsJuhPJbie91EKIG3CNVzQjQJOFMClkmuQX-YXSYF-lipeOTJXuSJzdOOw1kZeQYmnt99tADkpBul6K~ngn29qNjqCY84vG6hgBzkhTobWPOnMcAsBQzO2UEebJKLTcmwfBv8eo7RYfp9af-QA-nMdF3YF6IneIq09ymUDufTgSAlDmZNQD2lHdCIFiq5reWcLvbFs69gO9DMrv1KtddvGu4AhIiPtl2wD70m9ZgqnTVAJqQcml3hyekWTiOePcOZcDOQL3f1DDhiTXISWgBmbyEYvPGZ~s6~ovqmoSsykcHmFUNi0IRMTednLEjkYYmDwPciUw__',
+                '',
               ),
               SizedBox(height: 20),
 

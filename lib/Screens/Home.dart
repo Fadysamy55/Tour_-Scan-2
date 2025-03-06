@@ -92,6 +92,7 @@ class HomeState extends State<HomePage> {
 
         QuerySnapshot querySnapshotStatues =
         await _firestore.collection('Statues').get();
+        await _firestore.collection('Artifacts').get();
 
         if (querySnapshotStatues.docs.isNotEmpty) {
           for (int x = 0; x < querySnapshotStatues.docs.length; x++) {
@@ -386,7 +387,7 @@ class HomeState extends State<HomePage> {
               SizedBox(height: 20),
               // بقية الكود الخاص بعرض الـ Category و Explore...
               Text(
-                "Category",
+                "Artifacts",
                 style: TextStyle(
                     fontSize: 20,
                     fontWeight: FontWeight.bold,
@@ -475,7 +476,7 @@ class HomeState extends State<HomePage> {
               SizedBox(height: 10),
               SizedBox(height: 20),
               Text(
-                "Explore",
+                "Statues",
                 style: TextStyle(
                     fontSize: 20,
                     fontWeight: FontWeight.bold,

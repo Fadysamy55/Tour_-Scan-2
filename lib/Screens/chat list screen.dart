@@ -20,10 +20,10 @@ class _ChatListScreenState extends State<ChatListScreen> {
   Widget build(BuildContext context) {
     return Scaffold(
       appBar: AppBar(
-        backgroundColor: Colors.brown,
+        backgroundColor: Color(0xFF582218),
         title: Text(
           'Chats',
-          style: TextStyle(color: Colors.black, fontSize: 22, fontWeight: FontWeight.bold),
+          style: TextStyle(color:Colors.white, fontSize: 22, fontWeight: FontWeight.bold),
         ),
         centerTitle: true,
       ),
@@ -38,7 +38,7 @@ class _ChatListScreenState extends State<ChatListScreen> {
               overflow: TextOverflow.ellipsis,
             ),
             leading: CircleAvatar(
-              backgroundColor: Colors.brown[300],
+              backgroundColor: Color(0xFF582218),
               child: Text(
                 chats[index]["name"]![0].toUpperCase(),
                 style: TextStyle(color: Colors.white, fontWeight: FontWeight.bold),
@@ -58,7 +58,7 @@ class _ChatListScreenState extends State<ChatListScreen> {
         onPressed: () {
           Navigator.push(context, MaterialPageRoute(builder: (context) => ChatBotScreen()));
         },
-        backgroundColor: Colors.brown,
+        backgroundColor: Color(0xFF582218),
         child: Icon(Icons.chat, color: Colors.white),
       ),
     );

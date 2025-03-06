@@ -70,7 +70,7 @@ class _ChatBotScreenState extends State<ChatBotScreen> {
                     padding: EdgeInsets.symmetric(vertical: 12, horizontal: 16),
                     margin: EdgeInsets.symmetric(vertical: 5, horizontal: 10),
                     decoration: BoxDecoration(
-                      color: isUser ? Colors.brown[800] : Colors.grey[300], // السؤال بني غامق - الإجابة رمادي فاتح
+                      color: isUser ? Color(0xFF582218) : Colors.grey[300], // السؤال بني غامق - الإجابة رمادي فاتح
                       borderRadius: BorderRadius.circular(15),
                     ),
                     child: Text(
@@ -101,7 +101,7 @@ class _ChatBotScreenState extends State<ChatBotScreen> {
                   children: questionsAndAnswers.map((qna) {
                     return ElevatedButton(
                       style: ElevatedButton.styleFrom(
-                        backgroundColor: Colors.brown[800], // اللون البني الغامق للأسئلة
+                        backgroundColor: Color(0xFF582218), // اللون البني الغامق للأسئلة
                         padding: EdgeInsets.symmetric(horizontal: 12, vertical: 8),
                         shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(10)),
                       ),
@@ -123,11 +123,11 @@ class _ChatBotScreenState extends State<ChatBotScreen> {
                           filled: true,
                           fillColor: Colors.white,
                           focusedBorder: OutlineInputBorder(
-                            borderSide: BorderSide(color: Colors.brown[800]!),
+                            borderSide: BorderSide(color: Color(0xFF582218)!),
                             borderRadius: BorderRadius.circular(10),
                           ),
                           enabledBorder: OutlineInputBorder(
-                            borderSide: BorderSide(color: Colors.brown[800]!),
+                            borderSide: BorderSide(color: Color(0xFF582218)!),
                             borderRadius: BorderRadius.circular(10),
                           ),
                         ),
@@ -139,7 +139,7 @@ class _ChatBotScreenState extends State<ChatBotScreen> {
                       ),
                     ),
                     IconButton(
-                      icon: Icon(Icons.send, color: Colors.brown[800]),
+                      icon: Icon(Icons.send, color: Color(0xFF582218)),
                       onPressed: () {
                         if (messageController.text.trim().isNotEmpty) {
                           sendMessage(messageController.text.trim());

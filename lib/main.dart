@@ -65,7 +65,7 @@ class MyApp extends StatelessWidget {
         '/HomePage': (context) => HomePage(),
         '/Pyramids': (context) => Pyramids(),
       },
-      initialRoute: '/HomePage',
+      initialRoute: '/SettingsPage',
     );
   }
 }
