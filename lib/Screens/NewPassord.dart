@@ -129,7 +129,7 @@ class _NewPasswordScreenState extends State<NewPasswordScreen> {
                   width: double.infinity,
                   alignment: Alignment.center,
                   decoration: BoxDecoration(
-                    color: isButtonEnabled ? Colors.brown : Colors.grey,
+                    color: isButtonEnabled ?Color(0xFF582218) : Colors.grey,
                     borderRadius: BorderRadius.circular(8),
                   ),
                   child: isLoading
@@ -160,7 +160,7 @@ class _NewPasswordScreenState extends State<NewPasswordScreen> {
                         TextSpan(
                           text: "Login",
                           style: TextStyle(
-                              color: Colors.brown,
+                              color: Color(0xFF582218),
                               fontWeight: FontWeight.bold),
                         ),
                       ],

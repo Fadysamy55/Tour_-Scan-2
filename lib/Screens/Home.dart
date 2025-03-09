@@ -11,6 +11,7 @@ import 'package:tourscan/Screens/pyramids.dart';
 import '../MODELS/Postlmodel.dart';
 import '../main.dart';
 import 'About.dart';
+import 'Artifacts.dart';
 import 'Login.dart';
 import 'Setting.dart';
 import 'StartedScreen.dart';
@@ -402,77 +403,90 @@ class HomeState extends State<HomePage> {
                 ),
                 child: ClipRRect(
                   borderRadius: BorderRadius.circular(10),
-                  child: ListView.builder(
-                    scrollDirection: Axis.horizontal,
-                    itemCount: postsModel.length,
-                    padding: EdgeInsets.symmetric(horizontal: 10),
-                    itemBuilder: (BuildContext context, int index) {
-                      return InkWell(
-                        onTap: () async {
-                          await FirebaseFirestore.instance
-                              .collection('history')
-                              .doc()
-                              .set({
-                            'post_id': postsModel[index].id!,
-                            'user_id': sharedpref!.getString('uid'),
-                          });
-                          Navigator.push(
-                            context,
-                            MaterialPageRoute(
-                              builder: (context) =>
-                                  Pyramids(postsModel: postsModel[index]),
-                            ),
-                          );
-                        },
-                        child: Padding(
-                          padding: const EdgeInsets.all(8.0),
-                          child: FillImageCard(
-                            width: 200,
-                            heightImage: 100,
-                            color: Colors.grey.shade300,
-                            imageProvider:
-                            NetworkImage(postsModel[index].imgPath!),
-                            description: Row(
-                              mainAxisAlignment:
-                              MainAxisAlignment.spaceBetween,
-                              children: [
-                                Column(
-                                  crossAxisAlignment:
-                                  CrossAxisAlignment.start,
+                  child: StreamBuilder(
+                    stream: FirebaseFirestore.instance.collection("Artifacts").snapshots(),
+                    builder: (context, snapshot) {
+                      if (snapshot.connectionState == ConnectionState.waiting) {
+                        return Center(child: CircularProgressIndicator());
+                      }
+                      if (!snapshot.hasData || snapshot.data!.docs.isEmpty) {
+                        return Center(child: Text("No Artifacts Found"));
+                      }
+
+                      var artifacts = snapshot.data!.docs;
+
+                      return ListView.builder(
+                        scrollDirection: Axis.horizontal,
+                        itemCount: artifacts.length,
+                        padding: EdgeInsets.symmetric(horizontal: 10),
+                        itemBuilder: (context, index) {
+                          var artifact = artifacts[index].data() as Map<String, dynamic>;
+
+                          return InkWell(
+                            onTap: () async {
+                              await FirebaseFirestore.instance.collection('history').add({
+                                'post_id': artifacts[index].id,
+                                'user_id': sharedpref!.getString('uid'),
+                              });
+
+                              Navigator.push(
+                                context,
+                                MaterialPageRoute(
+                                  builder: (context) => ArtifactDetails(
+                                    title: artifact["title"],
+                                    imageUrl: artifact["image"],
+                                    description: artifact["description"],
+                                  ),
+                                ),
+                              );
+                            },
+                            child: Padding(
+                              padding: const EdgeInsets.all(8.0),
+                              child: FillImageCard(
+                                width: 200,
+                                heightImage: 100,
+                                color: Colors.grey.shade300,
+                                imageProvider: NetworkImage(artifact["image"]),
+                                description: Row(
+                                  mainAxisAlignment: MainAxisAlignment.spaceBetween,
                                   children: [
-                                    Text(
-                                      postsModel[index].name!,
-                                      style: TextStyle(
-                                        fontSize: 15.0,
-                                        fontWeight: FontWeight.bold,
-                                        color: Colors.black54,
-                                      ),
-                                    ),
-                                    SizedBox(
-                                      width: MediaQuery.sizeOf(context)
-                                          .width *
-                                          .22,
-                                      child: Text(
-                                        postsModel[index].title!,
-                                        overflow: TextOverflow.ellipsis,
-                                        style: TextStyle(
-                                          fontSize: 10.0,
-                                          fontWeight: FontWeight.bold,
-                                          color: Colors.black,
+                                    Column(
+                                      crossAxisAlignment: CrossAxisAlignment.start,
+                                      children: [
+                                        Text(
+                                          artifact["title"],
+                                          style: TextStyle(
+                                            fontSize: 15.0,
+                                            fontWeight: FontWeight.bold,
+                                            color: Colors.black54,
+                                          ),
                                         ),
-                                      ),
+                                        SizedBox(
+                                          width: MediaQuery.sizeOf(context).width * .22,
+                                          child: Text(
+                                            artifact["description"],
+                                            overflow: TextOverflow.ellipsis,
+                                            style: TextStyle(
+                                              fontSize: 10.0,
+                                              fontWeight: FontWeight.bold,
+                                              color: Colors.black,
+                                            ),
+                                          ),
+                                        ),
+                                      ],
                                     ),
                                   ],
                                 ),
-                              ],
+                              ),
                             ),
-                          ),
-                        ),
+                          );
+                        },
                       );
                     },
                   ),
                 ),
               ),
+
               SizedBox(height: 10),
               SizedBox(height: 20),
               Text(

@@ -198,7 +198,7 @@ class _SignUpScreenState extends State<SignUpScreen> {
                       Navigator.push(context, MaterialPageRoute(builder: (context) => Login()));
                     },
                     child: Text("Log In",
-                        style: TextStyle(color: Colors.brown, fontWeight: FontWeight.bold)),
+                        style: TextStyle(color: Color(0xFF582218), fontWeight: FontWeight.bold)),
                   ),
                 ],
               ),

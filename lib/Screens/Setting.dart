@@ -98,7 +98,7 @@ class _SettingsPageState extends State<SettingsPage> {
             ElevatedButton(
               onPressed: _updateAllData,
               style: ElevatedButton.styleFrom(
-                backgroundColor: Colors.brown[800],
+                backgroundColor: Color(0xFF582218),
                 padding: EdgeInsets.symmetric(horizontal: 50, vertical: 12),
               ),
               child: Text("Update Data", style: TextStyle(fontSize: 16, color: Colors.white)),

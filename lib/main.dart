@@ -59,13 +59,13 @@ class MyApp extends StatelessWidget {
         '/Started': (context) => Startedscreen(),
         '/ChatListScreen': (context) => ChatListScreen(),
         '/ForgetPasswordScreen': (context) => ForgetPasswordScreen(),
-        '/ChangeNewPasswordScreen': (context) => NewPasswordScreen(email: 'fady@gmail.com'),
+        '/ChangeNewPasswordScreen': (context) => NewPasswordScreen(email: 'Mohamed@gmail.com'),
         '/SettingsPage': (context) => SettingsPage(),
         '/AboutPage': (context) => AboutPage(),
         '/HomePage': (context) => HomePage(),
         '/Pyramids': (context) => Pyramids(),
       },
-      initialRoute: '/SettingsPage',
+      initialRoute: '/HomePage',
     );
   }
 }

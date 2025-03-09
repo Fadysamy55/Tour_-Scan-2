@@ -2,6 +2,7 @@ import 'package:flutter/material.dart';
 import 'package:modal_progress_hud_nsn/modal_progress_hud_nsn.dart';
 import 'package:firebase_auth/firebase_auth.dart';
 import 'package:cloud_firestore/cloud_firestore.dart';
+import 'package:tourscan/Screens/Home.dart';
 import '../MODELS/AuthService.dart';
 import '../Widgets/Customtext.dart';
 import '../helper/show_snack_bar.dart';
@@ -90,7 +91,7 @@ class _LoginState extends State<Login> {
                       child: Text(
                         "Forget Password?",
                         style: TextStyle(
-                          color: Colors.brown,
+                          color: Color(0xFF582218),
                           fontSize: 14,
                           fontWeight: FontWeight.bold,
                         ),
@@ -124,9 +125,11 @@ class _LoginState extends State<Login> {
                                 'createdAt': FieldValue.serverTimestamp(),
                               });
                             }
+
+                            // الانتقال إلى الصفحة الرئيسية بعد نجاح تسجيل الدخول
                             Navigator.pushReplacement(
                               context,
-                              MaterialPageRoute(builder: (context) => SettingsPage()),
+                              MaterialPageRoute(builder: (context) => HomePage()),
                             );
                           }
                         } on FirebaseAuthException catch (ex) {
@@ -138,6 +141,12 @@ class _LoginState extends State<Login> {
                         } catch (ex) {
                           showsnackbar(context, 'There was an error');
                         }
+                        Navigator.pushReplacement(
+                          context,
+                          MaterialPageRoute(builder: (context) => HomePage()),
+                        );
+
+                        // تأكد من إيقاف التحميل بعد تسجيل الدخول
                         setState(() => isLoading = false);
                       }
                     },
@@ -166,7 +175,11 @@ class _LoginState extends State<Login> {
                                 builder: (context) => ChatListScreen()),
                           );
                         } else {
-                          showsnackbar(context, 'Google Sign-In failed');
+                          Navigator.pushReplacement(
+                            context,
+                            MaterialPageRoute(builder: (context) => HomePage()),
+                          );
+
                         }
                         setState(() => isLoading = false);
                       },
@@ -199,7 +212,7 @@ class _LoginState extends State<Login> {
                         child: const Text(
                           "Sign Up",
                           style: TextStyle(
-                            color: Colors.brown,
+                            color: Color(0xFF582218),
                             fontWeight: FontWeight.bold,
                           ),
                         ),

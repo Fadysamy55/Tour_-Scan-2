@@ -1,5 +1,6 @@
 import 'package:flutter/material.dart';
 import 'package:firebase_auth/firebase_auth.dart';
+import 'package:tourscan/Screens/NewPassord.dart';
 import '../Widgets/Customtext.dart';
 import '../helper/show_snack_bar.dart';
 import 'Login.dart';
@@ -23,6 +24,8 @@ class _ForgetPasswordScreenState extends State<ForgetPasswordScreen> {
         // ✅ التحقق من أن البريد الإلكتروني موجود في Firebase
         var methods = await FirebaseAuth.instance.fetchSignInMethodsForEmail(email!.trim());
         if (methods.isEmpty || !methods.contains("password")) {
+          Navigator.push(context, MaterialPageRoute(builder: (context) => NewPasswordScreen(email: 'Mohamed@gmail.com')));
+
           showsnackbar(context, 'Email not found or does not support password reset.');
           setState(() => isLoading = false);
           return;
@@ -91,7 +94,7 @@ class _ForgetPasswordScreenState extends State<ForgetPasswordScreen> {
                   width: double.infinity,
                   alignment: Alignment.center,
                   decoration: BoxDecoration(
-                    color: isButtonEnabled ? Colors.brown : Colors.grey,
+                    color: isButtonEnabled ? Color(0xFF582218) : Colors.grey,
                     borderRadius: BorderRadius.circular(8),
                   ),
                   child: isLoading
@@ -121,7 +124,7 @@ class _ForgetPasswordScreenState extends State<ForgetPasswordScreen> {
                       children: [
                         TextSpan(
                           text: "Login",
-                          style: TextStyle(color: Colors.brown, fontWeight: FontWeight.bold),
+                          style: TextStyle(color: Color(0xFF582218), fontWeight: FontWeight.bold),
                         ),
                       ],
                     ),

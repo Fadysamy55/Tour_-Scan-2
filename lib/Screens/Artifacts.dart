@@ -1,32 +1,34 @@
 import 'package:flutter/material.dart';
 import 'package:google_fonts/google_fonts.dart';
 
-import '../MODELS/Postlmodel.dart';
+class ArtifactDetails extends StatelessWidget {
+  final String title;
+  final String imageUrl;
+  final String description;
 
-
-class Pyramids extends StatelessWidget {
-  final PostsModel? postsModel;
-  const Pyramids({Key? key, this.postsModel}) : super(key: key);
+  const ArtifactDetails({
+    Key? key,
+    required this.title,
+    required this.imageUrl,
+    required this.description,
+  }) : super(key: key);
 
   @override
   Widget build(BuildContext context) {
-    // الحصول على أبعاد الشاشة
     final screenHeight = MediaQuery.of(context).size.height;
     final screenWidth = MediaQuery.of(context).size.width;
 
     return Scaffold(
-
       body: Stack(
         children: [
           Column(
             children: [
-              // النصف العلوي: الصورة مع العنوان
               Container(
                 height: screenHeight * 0.5,
                 width: double.infinity,
                 decoration: BoxDecoration(
                   image: DecorationImage(
-                    image: NetworkImage(postsModel!.imgPath!),
+                    image: NetworkImage(imageUrl),
                     fit: BoxFit.cover,
                   ),
                 ),
@@ -35,7 +37,7 @@ class Pyramids extends StatelessWidget {
                   child: Padding(
                     padding: const EdgeInsets.all(16.0),
                     child: Text(
-                      postsModel!.title!,
+                      title,
                       style: GoogleFonts.oxanium(
                         fontSize: 30.0,
                         fontWeight: FontWeight.bold,
@@ -45,20 +47,19 @@ class Pyramids extends StatelessWidget {
                   ),
                 ),
               ),
-
               Expanded(
                 child: Container(
                   width: double.infinity,
                   decoration: BoxDecoration(
                     color: Colors.white,
-                    borderRadius: const BorderRadius.only(
+                    borderRadius: BorderRadius.only(
                       topLeft: Radius.circular(30),
                       topRight: Radius.circular(30),
                     ),
                     boxShadow: [
                       BoxShadow(
                         color: Colors.black26,
-                        offset: const Offset(0, -2),
+                        offset: Offset(0, -2),
                         blurRadius: 10,
                       ),
                     ],
@@ -80,7 +81,7 @@ class Pyramids extends StatelessWidget {
                         Expanded(
                           child: SingleChildScrollView(
                             child: Text(
-                              postsModel!.description!,
+                              description,
                               style: GoogleFonts.oxanium(
                                 fontSize: 15.0,
                                 color: Colors.grey,
@@ -105,7 +106,7 @@ class Pyramids extends StatelessWidget {
                   color: Colors.white,
                   borderRadius: BorderRadius.circular(8.0),
                 ),
-                padding: const EdgeInsets.all(8),
+                padding: EdgeInsets.all(8),
                 child: Icon(
                   Icons.arrow_back,
                   color: Color(0xFF582218),
@@ -119,15 +120,13 @@ class Pyramids extends StatelessWidget {
             child: CircleAvatar(
               radius: 30,
               backgroundColor: Colors.white,
-              child: Image.asset(
-                'assets/Vector.png', // استبدل باسم ملف الصورة الصحيح
-                width: 30, // تعديل الحجم حسب الحاجة
-                height: 30,
-                fit: BoxFit.contain,
+              child: Icon(
+                Icons.info,
+                color: Color(0xFF582218),
+                size: 30,
               ),
             ),
           ),
-
         ],
       ),
     );

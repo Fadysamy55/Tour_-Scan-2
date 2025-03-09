@@ -1,5 +1,6 @@
 import 'package:flutter/material.dart';
 import 'package:google_fonts/google_fonts.dart';
+import 'package:tourscan/Screens/Home.dart';
 import 'Login.dart';
 
 class Startedscreen extends StatefulWidget {
@@ -11,10 +12,10 @@ class _StartedscreenState extends State<Startedscreen> {
   @override
   void initState() {
     super.initState();
-    Future.delayed(Duration(seconds: 3), () {
+    Future.delayed(Duration(seconds: 6), () {
       Navigator.pushReplacement(
         context,
-        MaterialPageRoute(builder: (context) => Login()),
+        MaterialPageRoute(builder: (context) => HomePage()),
       );
     });
   }
@@ -30,10 +31,12 @@ class _StartedscreenState extends State<Startedscreen> {
             mainAxisSize: MainAxisSize.min,
             children: [
               // ✅ الصورة أولًا
-              Image.network(
-                '',
+              Image.asset(
+                'assets/Logo 1.png',
+                width: 350,
+                height: 300,
+                fit: BoxFit.contain,
               ),
-              SizedBox(height: 20),
 
               // ✅ "TOUR SCAN" تحت الصورة بلون محدد
               Text(
