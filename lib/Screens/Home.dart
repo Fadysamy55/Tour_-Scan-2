@@ -13,6 +13,7 @@ import '../main.dart';
 import 'About.dart';
 import 'Artifacts.dart';
 import 'Login.dart';
+import 'Scaning.dart';
 import 'Setting.dart';
 import 'StartedScreen.dart';
 import 'chat list screen.dart';
@@ -612,7 +613,7 @@ class HomeState extends State<HomePage> {
             onPressed: () {
               Navigator.push(
                 context,
-                MaterialPageRoute(builder: (context) => AboutPage()),
+                MaterialPageRoute(builder: (context) => ScanningPage()),
               );
             },
             style: ElevatedButton.styleFrom(

@@ -10,6 +10,7 @@ import 'Screens/Home.dart';
 import 'Screens/Login.dart';
 import 'Screens/NewPassord.dart';
 import 'Screens/Register.dart';
+import 'Screens/Scaning.dart';
 import 'Screens/Setting.dart';
 import 'Screens/StartedScreen.dart';
 import 'Screens/chat list screen.dart';
@@ -64,6 +65,8 @@ class MyApp extends StatelessWidget {
         '/AboutPage': (context) => AboutPage(),
         '/HomePage': (context) => HomePage(),
         '/Pyramids': (context) => Pyramids(),
+        '/ScanningPage': (context) => ScanningPage(),
+
       },
       initialRoute: '/HomePage',
     );

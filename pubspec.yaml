@@ -24,6 +24,8 @@ dependencies:
   firebase_core: ^3.12.1
   firebase_storage: ^12.4.4
   cloud_firestore: ^5.6.5
+  tflite_flutter: ^0.11.0
+  image: ^4.0.17  # لمعالجة الصور قبل إرسالها للنموذج
 
 dev_dependencies:
   flutter_test:
@@ -37,3 +39,4 @@ flutter:
     - assets/
     - assets/profile/
     - assets/model/model.tflite
+    - assets/model/labels.txt
