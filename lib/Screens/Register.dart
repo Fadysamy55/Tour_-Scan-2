@@ -40,6 +40,7 @@ class _SignUpScreenState extends State<SignUpScreen> {
         'phoneNumber': phoneNumber ?? '',
         'address': address ?? '',
         'email': email!,
+        'password': password!, // تم إضافة حفظ الباسورد في Firestore
         'age': age ?? 0,
         'gender': gender ?? 'Not Specified',
         'createdAt': DateTime.now(),

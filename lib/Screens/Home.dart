@@ -1,5 +1,6 @@
 import 'dart:convert';
 
+import 'package:firebase_auth/firebase_auth.dart';
 import 'package:flutter/material.dart';
 import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:flutter/services.dart';
@@ -12,6 +13,7 @@ import '../MODELS/Postlmodel.dart';
 import '../main.dart';
 import 'About.dart';
 import 'Artifacts.dart';
+import 'EgyptMuseumPage.dart';
 import 'Login.dart';
 import 'Scaning.dart';
 import 'Setting.dart';
@@ -29,15 +31,47 @@ class HomePage extends StatefulWidget {
 
 class HomeState extends State<HomePage> {
   var _firestore = FirebaseFirestore.instance;
-  final TextEditingController _searchController = TextEditingController();
+   TextEditingController _searchController = TextEditingController();
   List<PostsModel> postsModel = [];
   List<PostsModel> allModel = [];
+  List<Map<String, dynamic>> allProducts = []; // جميع المنتجات
+  List<Map<String, dynamic>> filteredProducts = [];
 
   @override
   void initState() {
     super.initState();
     getPlaces();
+    getProducts(); // تحميل المنتجات عند فتح الصفحة
+
   }
+  void getProducts() async {
+    QuerySnapshot snapshot =
+    await FirebaseFirestore.instance.collection("Artifacts").get();
+
+    setState(() {
+      allProducts = snapshot.docs
+          .map((doc) => doc.data() as Map<String, dynamic>)
+          .toList();
+      filteredProducts = List.from(allProducts); // عرض جميع المنتجات في البداية
+    });
+  }
+
+  // دالة البحث داخل قائمة المنتجات
+  void filterSearchResults(String query) {
+    setState(() {
+      if (query.isEmpty) {
+        filteredProducts = List.from(allProducts); // عرض كل المنتجات إذا كان البحث فارغًا
+      } else {
+        filteredProducts = allProducts.where((product) {
+          return product["title"]
+              .toString()
+              .toLowerCase()
+              .contains(query.toLowerCase());
+        }).toList();
+      }
+    });
+  }
+
   Future<void> importJsonToFirestore() async {
     try {
       // Load JSON file from assets
@@ -147,7 +181,8 @@ class HomeState extends State<HomePage> {
           ),
         ),
 
-        title: Container(
+        title:
+        Container(
           width: 220,
           height: 50,
           decoration: BoxDecoration(
@@ -159,14 +194,18 @@ class HomeState extends State<HomePage> {
             textAlign: TextAlign.start,
             onChanged: (val) async {
               postsModel.clear();
+
               if (val.isEmpty) {
-                getPlaces();
+                getPlaces(); // إرجاع جميع المنتجات عند مسح البحث
               } else {
-                postsModel.addAll(allModel.where((searchItem) =>
-                    searchItem.title!
-                        .toLowerCase()
-                        .contains(val.toLowerCase())));
+                // البحث عن المنتجات التي تحتوي على النص المدخل
+                var filtered = allModel.where((searchItem) {
+                  return searchItem.title!.toLowerCase().contains(val.toLowerCase());
+                }).toList();
+
+                postsModel.addAll(filtered);
               }
+
               setState(() {});
             },
             decoration: InputDecoration(
@@ -179,11 +218,13 @@ class HomeState extends State<HomePage> {
               ),
               filled: true,
               fillColor: Colors.grey.shade200,
-              contentPadding:
-              EdgeInsets.symmetric(vertical: 10, horizontal: 15),
+              contentPadding: EdgeInsets.symmetric(vertical: 10, horizontal: 15),
             ),
           ),
         ),
+
+
+
         centerTitle: true,
         actions: [
           TextButton(
@@ -205,50 +246,69 @@ class HomeState extends State<HomePage> {
         child: Column(
           children: [
             Container(
-              color: Colors.white, // جعل الخلفية بالكامل بيضاء
-              padding: EdgeInsets.only(top: 50, bottom: 20), // مسافة علوية وسفلية
+              color: Colors.white,
+              padding: EdgeInsets.only(top: 50, bottom: 20),
               child: Column(
                 children: [
-                  // صورة الحساب
                   Stack(
                     alignment: Alignment.center,
                     children: [
                       CircleAvatar(
-                        radius: 70, // تكبير الخلفية
-                        backgroundImage: AssetImage("assets/profile1.png"), // الخلفية
+                        radius: 70,
+                        backgroundImage: AssetImage("assets/profile1.png"),
                       ),
                       CircleAvatar(
-                        radius: 50, // تصغير الصورة فوق الخلفية
-                        backgroundColor: Colors.transparent, // إزالة أي لون خلفي
-                        backgroundImage: AssetImage("assets/profile2.png"), // الصورة الشخصية
+                        radius: 50,
+                        backgroundColor: Colors.transparent,
+                        backgroundImage: AssetImage("assets/profile2.png"),
                       ),
                     ],
                   ),
-                  SizedBox(height: 15), // مسافة بعد الصورة
+                  SizedBox(height: 15),
 
-                  // اسم المستخدم
-                  Text(
-                    "User Name",
-                    style: TextStyle(
-                      fontSize: 20,
-                      fontWeight: FontWeight.bold,
-                      color: Colors.black,
-                    ),
+                  // تحميل بيانات المستخدم
+                  FutureBuilder<DocumentSnapshot>(
+                    future: FirebaseFirestore.instance
+                        .collection('users')
+                        .doc(FirebaseAuth.instance.currentUser?.uid)
+                        .get(),
+                    builder: (context, snapshot) {
+                      if (snapshot.connectionState == ConnectionState.waiting) {
+                        return CircularProgressIndicator(); // أثناء التحميل
+                      } else if (snapshot.hasError || !snapshot.hasData || !snapshot.data!.exists) {
+                        return Column(
+                          children: [
+                            Text(
+                              "User Name",
+                              style: TextStyle(fontSize: 20, fontWeight: FontWeight.bold, color: Colors.black),
+                            ),
+                            SizedBox(height: 5),
+                            Text(
+                              "user@example.com",
+                              style: TextStyle(fontSize: 16, color: Colors.grey[600], decoration: TextDecoration.underline),
+                            ),
+                          ],
+                        ); // في حالة الخطأ أو عدم وجود البيانات
+                      } else {
+                        var userData = snapshot.data!;
+                        return Column(
+                          children: [
+                            Text(
+                              userData['fullName'] ?? "User Name",
+                              style: TextStyle(fontSize: 20, fontWeight: FontWeight.bold, color: Colors.black),
+                            ),
+                            SizedBox(height: 5),
+                            Text(
+                              userData['email'] ?? "user@example.com",
+                              style: TextStyle(fontSize: 16, color: Colors.grey[600], decoration: TextDecoration.underline),
+                            ),
+                          ],
+                        ); // عرض البيانات الفعلية
+                      }
+                    },
                   ),
-                  SizedBox(height: 5), // مسافة بين الاسم والإيميل
+                  SizedBox(height: 15),
 
-                  // الإيميل
-                  Text(
-                    "user@example.com",
-                    style: TextStyle(
-                      fontSize: 16,
-                      color: Colors.grey[600],
-                      decoration: TextDecoration.underline,
-                    ),
-                  ),
-                  SizedBox(height: 15), // مسافة قبل الخط الفاصل
-
-                  // الخط الفاصل الرمادي
                   Divider(
                     thickness: 1,
                     color: Colors.grey.shade300,
@@ -267,14 +327,14 @@ class HomeState extends State<HomePage> {
                     leading: Icon(Icons.home, color: Color(0xFF582218)),
                     title: Text("Home"),
                     onTap: () {
-                      Navigator.push(context, MaterialPageRoute(builder: (context) => HomePage()));
+                      Navigator.pushReplacement(context, MaterialPageRoute(builder: (context) => HomePage()));
                     },
                   ),
                   ListTile(
                     leading: Icon(Icons.settings, color: Color(0xFF582218)),
                     title: Text("Settings"),
                     onTap: () {
-                      Navigator.push(context, MaterialPageRoute(builder: (context) => SettingsPage()));
+                      Navigator.pushReplacement(context, MaterialPageRoute(builder: (context) => SettingsPage()));
                     },
                   ),
                   ListTile(
@@ -286,28 +346,28 @@ class HomeState extends State<HomePage> {
                     ),
                     title: Text("Ask"),
                     onTap: () {
-                      Navigator.push(context, MaterialPageRoute(builder: (context) => ChatListScreen()));
+                      Navigator.pushNamed(context, '/chat');
                     },
                   ),
                   ListTile(
                     leading: Icon(Icons.info, color: Color(0xFF582218)),
                     title: Text("About"),
                     onTap: () {
-                      Navigator.push(context, MaterialPageRoute(builder: (context) => AboutPage()));
+                      Navigator.pushReplacement(context, MaterialPageRoute(builder: (context) => AboutPage()));
                     },
                   ),
                 ],
               ),
             ),
 
-            // زر تسجيل الخروج في الأسفل
+            // زر تسجيل الخروج
             Padding(
               padding: EdgeInsets.only(bottom: 10),
               child: ListTile(
                 leading: Icon(Icons.logout, color: Color(0xFF582218)),
                 title: Text("Logout"),
                 onTap: () {
-                  Navigator.push(context, MaterialPageRoute(builder: (context) => Startedscreen()));
+                  Navigator.pushReplacement(context, MaterialPageRoute(builder: (context) => Startedscreen()));
                 },
               ),
             ),
@@ -335,55 +395,66 @@ class HomeState extends State<HomePage> {
                 TextStyle(fontSize: 16, color: Colors.grey.shade700),
               ),
               SizedBox(height: 20),
-              Stack(
-                children: [
-                  // الصورة مع زوايا دائرية
-                  ClipRRect(
-                    borderRadius: BorderRadius.circular(25), // زوايا دائرية قوية
-                    child: SizedBox(
-                      width: 538,
-                      height: 227,
-                      child: Image.asset("assets/16a04dd4bd365e859919801c65f396ab.jpeg",
-                        fit: BoxFit.cover,
+              GestureDetector(
+                onTap: () {
+                  Navigator.push(
+                    context,
+                    MaterialPageRoute(builder: (context) => EgyptMuseumPage(imgPath: 'assets/16a04dd4bd365e859919801c65f396ab.jpeg', title: 'Egyptian Museum', description: 'The Egyptian Museum in Cairo (EMC) is the oldest archaeological museum in the Middle East, '
+                        'housing over 170,000 artefacts. It has the largest collection of Pharaonic antiquities in the world.\n\n'
+                        'The Museum’s exhibits span the Pre-Dynastic Period till the Graeco-Roman Era (c. 5500 BC - AD 364).',)),
+                  );
+                },
+                child: Stack(
+                  children: [
+                    // الصورة مع زوايا دائرية
+                    ClipRRect(
+                      borderRadius: BorderRadius.circular(25), // زوايا دائرية قوية
+                      child: SizedBox(
+                        width: 538,
+                        height: 227,
+                        child: Image.asset(
+                          "assets/16a04dd4bd365e859919801c65f396ab.jpeg",
+                          fit: BoxFit.cover,
+                        ),
                       ),
                     ),
-                  ),
 
-                  // النصوص داخل مستطيل شفاف
-                  Positioned(
-                    bottom: 10, // وضع النصوص قرب أسفل الصورة
-                    left: 20,
-                    child: Container(
-                      padding: EdgeInsets.symmetric(horizontal: 12, vertical: 8),
-                      decoration: BoxDecoration(
-                        color: Colors.black26, // تفتيح الخلفية أكثر لجعلها ناعمة
-                        borderRadius: BorderRadius.circular(12), // زوايا ناعمة
-                      ),
-                      child: Column(
-                        crossAxisAlignment: CrossAxisAlignment.start, // المحاذاة لليسار
-                        mainAxisSize: MainAxisSize.min,
-                        children: [
-                          Text(
-                            'Egyptian Museum',
-                            style: GoogleFonts.inter(
-                              fontSize: 16,
-                              fontWeight: FontWeight.w600,
-                              color: Colors.white, // العنوان بالأبيض
+                    // النصوص داخل مستطيل شفاف
+                    Positioned(
+                      bottom: 10, // وضع النصوص قرب أسفل الصورة
+                      left: 20,
+                      child: Container(
+                        padding: EdgeInsets.symmetric(horizontal: 12, vertical: 8),
+                        decoration: BoxDecoration(
+                          color: Colors.black26, // تفتيح الخلفية أكثر لجعلها ناعمة
+                          borderRadius: BorderRadius.circular(12), // زوايا ناعمة
+                        ),
+                        child: Column(
+                          crossAxisAlignment: CrossAxisAlignment.start, // المحاذاة لليسار
+                          mainAxisSize: MainAxisSize.min,
+                          children: [
+                            Text(
+                              'Egyptian Museum',
+                              style: GoogleFonts.inter(
+                                fontSize: 16,
+                                fontWeight: FontWeight.w600,
+                                color: Colors.white, // العنوان بالأبيض
+                              ),
                             ),
-                          ),
-                          Text(
-                            'Egypt, Giza',
-                            style: GoogleFonts.inter(
-                              fontSize: 14,
-                              fontWeight: FontWeight.w400,
-                              color: Colors.grey[300], // لون أفتح قليلاً
+                            Text(
+                              'Egypt, Giza',
+                              style: GoogleFonts.inter(
+                                fontSize: 14,
+                                fontWeight: FontWeight.w400,
+                                color: Colors.grey[300], // لون أفتح قليلاً
+                              ),
                             ),
-                          ),
-                        ],
+                          ],
+                        ),
                       ),
                     ),
-                  ),
-                ],
+                  ],
+                ),
               ),
 
               SizedBox(height: 20),

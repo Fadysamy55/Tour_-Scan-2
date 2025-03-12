@@ -1,7 +1,6 @@
 import 'dart:io';
 import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:firebase_auth/firebase_auth.dart';
-import 'package:firebase_storage/firebase_storage.dart';
 import 'package:flutter/material.dart';
 import 'package:image_picker/image_picker.dart';
 
@@ -18,6 +17,7 @@ class _SettingsPageState extends State<SettingsPage> {
   User? user;
   Map<String, dynamic>? userData;
   bool isLoading = true;
+  bool _obscurePassword = true;
   File? _imageFile;
   Map<String, TextEditingController> controllers = {};
 
@@ -43,6 +43,7 @@ class _SettingsPageState extends State<SettingsPage> {
             'address': TextEditingController(text: userData!['address']),
             'age': TextEditingController(text: userData!['age'].toString()),
             'gender': TextEditingController(text: userData!['gender']),
+            'password': TextEditingController(text: "********"),
           };
         });
       }
@@ -52,10 +53,20 @@ class _SettingsPageState extends State<SettingsPage> {
   void _updateAllData() async {
     Map<String, dynamic> updatedData = {};
     controllers.forEach((key, controller) {
-      if (controller.text != userData![key]) {
+      if (key != 'password' && controller.text != userData![key]) {
         updatedData[key] = controller.text;
       }
     });
+
+    if (controllers['password']!.text != "********") {
+      try {
+        await user!.updatePassword(controllers['password']!.text);
+        updatedData['password'] = controllers['password']!.text;
+      } catch (e) {
+        _showMessage("Failed to update password: $e", isError: true);
+        return;
+      }
+    }
 
     if (updatedData.isNotEmpty) {
       await _firestore.collection('users').doc(user!.uid).update(updatedData);
@@ -66,9 +77,9 @@ class _SettingsPageState extends State<SettingsPage> {
     }
   }
 
-  void _showMessage(String message) {
+  void _showMessage(String message, {bool isError = false}) {
     ScaffoldMessenger.of(context).showSnackBar(
-      SnackBar(content: Text(message), backgroundColor: Colors.green),
+      SnackBar(content: Text(message), backgroundColor: isError ? Colors.red : Colors.green),
     );
   }
 
@@ -90,10 +101,11 @@ class _SettingsPageState extends State<SettingsPage> {
           children: [
             _buildEditableField("Full Name", "fullName"),
             _buildEditableField("Email", "email"),
-            _buildEditableField("phoneNumber", "phoneNumber", isNumber: true),
+            _buildEditableField("Phone Number", "phoneNumber", isNumber: true),
             _buildEditableField("Address", "address"),
             _buildEditableField("Age", "age", isNumber: true),
             _buildEditableField("Gender", "gender"),
+            _buildPasswordField(),
             SizedBox(height: 15),
             ElevatedButton(
               onPressed: _updateAllData,
@@ -120,6 +132,32 @@ class _SettingsPageState extends State<SettingsPage> {
           keyboardType: isNumber ? TextInputType.number : TextInputType.text,
           decoration: InputDecoration(
             border: OutlineInputBorder(),
+          ),
+        ),
+        SizedBox(height: 15),
+      ],
+    );
+  }
+
+  Widget _buildPasswordField() {
+    return Column(
+      crossAxisAlignment: CrossAxisAlignment.start,
+      children: [
+        Text("Password", style: TextStyle(fontSize: 16, fontWeight: FontWeight.bold)),
+        SizedBox(height: 5),
+        TextField(
+          controller: controllers['password'],
+          obscureText: _obscurePassword,
+          decoration: InputDecoration(
+            border: OutlineInputBorder(),
+            suffixIcon: IconButton(
+              icon: Icon(_obscurePassword ? Icons.visibility_off : Icons.visibility),
+              onPressed: () {
+                setState(() {
+                  _obscurePassword = !_obscurePassword;
+                });
+              },
+            ),
           ),
         ),
         SizedBox(height: 15),

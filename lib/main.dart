@@ -68,7 +68,7 @@ class MyApp extends StatelessWidget {
         '/ScanningPage': (context) => ScanningPage(),
 
       },
-      initialRoute: '/HomePage',
+      initialRoute: '/SignUpScreen',
     );
   }
 }
